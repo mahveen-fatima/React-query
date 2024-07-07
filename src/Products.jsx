@@ -1,42 +1,62 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+// import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
+
+const fetchProducts = async () => {
+    const response = await fetch("https://dummyjson.com/products");
+    const data = await response.json();
+    return data.products;
+};
 
 const Products = () => {
 
-    const [products, setProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const {
+        isLoading, 
+        error, 
+        data: products,} = useQuery({
+            queryKey: ["products"], 
+            queryFn: fetchProducts, 
+            // staleTime: 10000
+        });
+  
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setIsLoading(true);
-                setError(null); // clearing earlier errors
-                const response = await fetch("https://dummyjson.com/products");
-                const data = await response.json();
+
+
+
+
+
+
+    // const [products, setProducts] = useState([]);
+    // const [isLoading, setIsLoading] = useState(false);
+    // const [error, setError] = useState(null);
+
+    // useEffect(() => {
+    //     const fetchProducts = async () => {
+    //         try {
+    //             setIsLoading(true);
+    //             setError(null); // clearing earlier errors
+    //             const response = await fetch("https://dummyjson.com/products");
+    //             const data = await response.json();
                 
-                console.log(data.products);
+    //             console.log(data.products);
     
-                setProducts(data.products);
+    //             setProducts(data.products);
     
-                setIsLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setIsLoading(false)
-            }
-
-
-
-        };
-        fetchProducts();
-    }, [])
+    //             setIsLoading(false);
+    //         } catch (error) {
+    //             setError(error.message);
+    //             setIsLoading(false)
+    //         }
+    //     };
+    //     fetchProducts();
+    // }, [])
 
     if(isLoading) {
         return <h3>Loading...</h3>
     }
 
     if(error) {
-        return <h3>Error: {error}</h3> 
+        return <h3>Error: {error.message}</h3> 
     }
     
     return (
